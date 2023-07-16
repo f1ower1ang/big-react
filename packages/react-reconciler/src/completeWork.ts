@@ -5,7 +5,12 @@ import {
   createTextInstance,
 } from "hostConfig";
 import { FiberNode } from "./fiber";
-import { HostComponent, HostRoot, HostText } from "./workTags";
+import {
+  FunctionComponent,
+  HostComponent,
+  HostRoot,
+  HostText,
+} from "./workTags";
 import { NoFlags } from "./fiberFlags";
 
 // 递归中的回溯阶段：构建离屏DOM树
@@ -14,6 +19,9 @@ export const completeWork = (wip: FiberNode) => {
   const current = wip.alternate;
 
   switch (wip.tag) {
+    case FunctionComponent:
+      bubbleProperties(wip);
+      return null;
     case HostComponent:
       if (current !== null && wip.stateNode) {
         // update

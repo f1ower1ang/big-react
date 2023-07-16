@@ -1,5 +1,3 @@
-// ReactDOM.createRoot(root).render(<App />);
-
 import {
   createContainer,
   updateContainer,
@@ -7,6 +5,7 @@ import {
 import { Container } from "./hostConfig";
 import { ReactElementType } from "share/ReactTypes";
 
+// ReactDOM.createRoot(root).render(<App />);
 export function createRoot(container: Container) {
   const root = createContainer(container);
 
