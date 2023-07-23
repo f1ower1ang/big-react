@@ -7,7 +7,7 @@ import { Placement } from "./fiberFlags";
 function ChildReconciler(shouldTrackEffects: boolean) {
   function reconcileSingleElement(
     returnFiber: FiberNode,
-    currentFiber: FiberNode | null,
+    currentFirstFiber: FiberNode | null,
     element: ReactElementType
   ) {
     // 根据 element 创建 fiber
@@ -18,7 +18,7 @@ function ChildReconciler(shouldTrackEffects: boolean) {
 
   function reconcileSingleTextNode(
     returnFiber: FiberNode,
-    currentFiber: FiberNode | null,
+    currentFirstFiber: FiberNode | null,
     content: string | number
   ) {
     const fiber = new FiberNode(HostText, { content }, null);
@@ -35,7 +35,7 @@ function ChildReconciler(shouldTrackEffects: boolean) {
 
   return function reconcileChildFibers(
     returnFiber: FiberNode,
-    currentFiber: FiberNode | null,
+    currentFirstFiber: FiberNode | null,
     newChild?: ReactElementType
   ) {
     // 判断当前 fiber 的类型
@@ -43,7 +43,7 @@ function ChildReconciler(shouldTrackEffects: boolean) {
       switch (newChild.$$typeof) {
         case REACT_ELEMENT_TYPE:
           return placeSingleChild(
-            reconcileSingleElement(returnFiber, currentFiber, newChild)
+            reconcileSingleElement(returnFiber, currentFirstFiber, newChild)
           );
         default:
           if (__DEV__) {
@@ -56,7 +56,7 @@ function ChildReconciler(shouldTrackEffects: boolean) {
     // HostText
     if (typeof newChild === "string" || typeof newChild === "number") {
       return placeSingleChild(
-        reconcileSingleTextNode(returnFiber, currentFiber, newChild)
+        reconcileSingleTextNode(returnFiber, currentFirstFiber, newChild)
       );
     }
 

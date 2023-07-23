@@ -5,6 +5,7 @@ import { FiberNode, FiberRootNode, createWorkInProgress } from "./fiber";
 import { MutationMask, NoFlags } from "./fiberFlags";
 import { HostRoot } from "./workTags";
 
+// workInProgress 为当前正在工作的 fiberNode
 let workInProgress: FiberNode | null = null;
 
 function prepareFreshStack(root: FiberRootNode) {
@@ -17,7 +18,7 @@ export function scheduleUpdateOnFiber(fiber: FiberNode) {
   renderRoot(root);
 }
 
-// 寻找 fiberRootNode
+// 从 fiberNode 开始，一直向上寻找，直到找到 HostRoot
 function markUpdateFromFiberToRoot(fiber: FiberNode) {
   let node = fiber;
   let parent = node.return;
@@ -72,7 +73,7 @@ function commitRoot(root: FiberRootNode) {
   const rootHasEffect = (finishedWork.flags & MutationMask) !== NoFlags;
   if (subtreeHasEffect || rootHasEffect) {
     // 1. before mutation
-    // 2. mutation
+    // 2. mutation Placement
     commitMutationEffects(finishedWork);
     root.current = finishedWork;
     // 3. layout

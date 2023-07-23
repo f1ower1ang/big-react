@@ -12,7 +12,7 @@ import { scheduleUpdateOnFiber } from "./workLoop";
 
 // 对应于 ReactDom.createRoot，生成 FiberRootNode
 export function createContainer(container: Container) {
-  const hostRootFiber = new FiberNode(HostRoot, null, null);
+  const hostRootFiber = new FiberNode(HostRoot, {}, null);
   const root = new FiberRootNode(container, hostRootFiber);
   hostRootFiber.updateQueue = createUpdateQueue();
   return root;

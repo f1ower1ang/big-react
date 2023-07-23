@@ -28,8 +28,9 @@ export class FiberNode {
     // React Element 实例
     this.tag = tag;
     this.key = key;
+    // 对于 HostComponent，stateNode 为 DOM 节点；对于 FunctionComponent，stateNode 为 null; 对于 ClassComponent，stateNode 为实例
     this.stateNode = null;
-    // 如果是 FC，type 为函数
+    // 对于 FunctionComponent，type 为函数；对于 HostComponent，type 为 DOM 节点的类型（如 div）; 对于 ClassComponent，type 为类
     this.type = null;
 
     // 构建 fiberNode 树
@@ -41,6 +42,7 @@ export class FiberNode {
     this.child = null;
     this.index = 0;
 
+    // ref 为函数或者字符串
     this.ref = null;
 
     // 作为工作单元
@@ -49,6 +51,7 @@ export class FiberNode {
     this.memorizedState = null;
     this.updateQueue = null;
 
+    // 双缓存机制
     this.alternate = null;
     // 副作用
     this.flags = NoFlags;
@@ -56,9 +59,15 @@ export class FiberNode {
   }
 }
 
+/**
+ * FiberRootNode
+ * @param container DOM 节点
+ * @param hostRootFiber FiberNode
+ */
 export class FiberRootNode {
   container: Container;
   current: FiberNode;
+  // 双缓存机制
   finishedWork: FiberNode | null;
 
   constructor(container: Container, hostRootFiber: FiberNode) {
