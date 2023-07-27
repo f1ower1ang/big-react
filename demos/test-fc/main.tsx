@@ -2,8 +2,8 @@ import { useState } from "react";
 import ReactDOM from "react-dom/client";
 
 function App() {
-  const [num] = useState(0);
-  return <div>{num}</div>;
+  const [num, setNum] = useState(0);
+  return <div onClickCapture={() => setNum(num + 1)}>{num}</div>;
 }
 
 function Child() {
