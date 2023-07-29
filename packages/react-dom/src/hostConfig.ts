@@ -42,9 +42,17 @@ export function commitTextUpdate(textInstance: TextInstance, content: string) {
   textInstance.textContent = content;
 }
 
-export const removeChild = (
+export function removeChild(
   child: Instance | TextInstance,
   container: Container
-) => {
+) {
   container.removeChild(child);
-};
+}
+
+export function insertChildToContainer(
+  container: Container,
+  child: Instance,
+  before: Instance
+) {
+  container.insertBefore(child, before);
+}

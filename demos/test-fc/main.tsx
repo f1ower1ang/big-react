@@ -3,7 +3,20 @@ import ReactDOM from "react-dom/client";
 
 function App() {
   const [num, setNum] = useState(0);
-  return <div onClickCapture={() => setNum(num + 1)}>{num}</div>;
+  const arr =
+    num % 2 === 0
+      ? [<li key="1">1</li>, <li key="2">2</li>, <li key="3">3</li>]
+      : [<li key="3">3</li>, <li key="2">2</li>, <li key="1">1</li>];
+  return (
+    <div
+      onClick={(e) => {
+        console.log(e.target);
+        setNum(num + 1);
+      }}
+    >
+      <ul>{arr}</ul>
+    </div>
+  );
 }
 
 function Child() {

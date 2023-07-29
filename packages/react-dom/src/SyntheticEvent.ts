@@ -31,13 +31,9 @@ export function initEvent(container: Container, eventType: string) {
   if (__DEV__) {
     console.log("初始化事件:", eventType);
   }
-  container.addEventListener(
-    eventType,
-    (e) => {
-      dispatchEvent(container, eventType, e);
-    },
-    false
-  );
+  container.addEventListener(eventType, (e) => {
+    dispatchEvent(container, eventType, e);
+  });
 }
 
 function dispatchEvent(container: Container, eventType: string, e: Event) {
@@ -47,7 +43,7 @@ function dispatchEvent(container: Container, eventType: string, e: Event) {
     return;
   }
 
-  // 1. 收集事件
+  // 1. 收集沿途的事件
   const { bubble, capture } = collectPaths(
     targetElement as DOMElement,
     container,
@@ -116,7 +112,7 @@ function createSyntheticEvent(e: Event) {
 
   syntheticEvent.stopPropagation = () => {
     syntheticEvent.__stopPropagation = true;
-    originStopPropagation.call(e);
+    originStopPropagation && originStopPropagation.call(e);
   };
   return syntheticEvent;
 }

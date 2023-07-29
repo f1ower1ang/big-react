@@ -31,7 +31,7 @@ export const completeWork = (wip: FiberNode) => {
       if (current !== null && wip.stateNode) {
         // update
         // 1. props是否有变化
-        // 2. 变了 -> 标记更新
+        // 2. 变了 -> Update flag
         updateFiberProps(wip.stateNode, newProps);
       } else {
         // 1. 构建DOM

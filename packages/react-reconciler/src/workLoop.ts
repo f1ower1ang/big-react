@@ -88,19 +88,19 @@ function workLoop() {
   }
 }
 
-function performUnitOfWork(fiber: FiberNode) {
-  const next = beginWork(fiber);
-  fiber.memorizedProps = fiber.pendingProps;
+function performUnitOfWork(wip: FiberNode) {
+  const next = beginWork(wip);
+  wip.memorizedProps = wip.pendingProps;
 
   if (next === null) {
-    completeUnitOfWork(fiber);
+    completeUnitOfWork(wip);
   } else {
     workInProgress = next;
   }
 }
 
-function completeUnitOfWork(fiber: FiberNode) {
-  let node: FiberNode | null = fiber;
+function completeUnitOfWork(wip: FiberNode) {
+  let node: FiberNode | null = wip;
 
   do {
     completeWork(node);

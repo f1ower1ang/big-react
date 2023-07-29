@@ -112,6 +112,8 @@ function mountWorkInProgressHook(): Hook {
     updateQueue: null,
     next: null,
   };
+  // mount时，以链表的形式存储hook
+  // 并将hook链表头保存到workInProgress.memoizedState
   if (workInProgressHook === null) {
     // mount时 第一个 hook
     if (currentlyRenderingFiber === null) {
