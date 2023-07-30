@@ -1,4 +1,4 @@
-import { REACT_ELEMENT_TYPE } from "share/ReactSymbols";
+import { REACT_ELEMENT_TYPE, REACT_FRAGMENT_TYPE } from "share/ReactSymbols";
 import {
   Key,
   Props,
@@ -68,19 +68,14 @@ export const jsx = (type: ElementType, config: any, ...maybeChildren: any) => {
   return ReactElement(type, key, ref, props);
 };
 
-export const jsxDEV = (type: ElementType, config: any) => {
-  let key: Key = null;
+export const Fragment = REACT_FRAGMENT_TYPE;
+
+export function jsxDEV(type: ElementType, config: any, key: Key) {
   const props: Props = {};
   let ref: Ref = null;
 
   for (const prop in config) {
     const val = config[prop];
-    if (prop === "key") {
-      if (val !== undefined) {
-        key = "" + val;
-      }
-      continue;
-    }
     if (prop === "ref") {
       if (val !== undefined) {
         ref = val;
@@ -91,5 +86,5 @@ export const jsxDEV = (type: ElementType, config: any) => {
       props[prop] = val;
     }
   }
-  return ReactElement(type, key, ref, props);
-};
+  return ReactElement(type, key + "", ref, props);
+}
