@@ -92,21 +92,21 @@ function ChildReconciler(shouldTrackEffects: boolean) {
 
   function reconcileSingleTextNode(
     returnFiber: FiberNode,
-    currentFiber: FiberNode | null,
+    currentFirstChild: FiberNode | null,
     content: string | number
   ) {
-    while (currentFiber !== null) {
+    while (currentFirstChild !== null) {
       // update
-      if (currentFiber.tag === HostText) {
+      if (currentFirstChild.tag === HostText) {
         // type相同，可以复用
-        const existing = useFiber(currentFiber, { content });
+        const existing = useFiber(currentFirstChild, { content });
         existing.return = returnFiber;
         // 给其他的兄弟节点标记为删除
-        deleteRemainingChildren(returnFiber, currentFiber.sibling);
+        deleteRemainingChildren(returnFiber, currentFirstChild.sibling);
         return existing;
       }
-      deleteChild(returnFiber, currentFiber);
-      currentFiber = currentFiber.sibling;
+      deleteChild(returnFiber, currentFirstChild);
+      currentFirstChild = currentFirstChild.sibling;
     }
     const fiber = new FiberNode(HostText, { content }, null);
     fiber.return = returnFiber;
@@ -215,7 +215,7 @@ function ChildReconciler(shouldTrackEffects: boolean) {
             return updateFragment(
               returnFiber,
               before,
-              element,
+              element.props.children,
               keyToUse,
               existingChildren
             );
@@ -245,7 +245,7 @@ function ChildReconciler(shouldTrackEffects: boolean) {
 
   return function reconcileChildFibers(
     returnFiber: FiberNode,
-    currentFiber: FiberNode | null,
+    currentFirstChild: FiberNode | null,
     newChild?: any
   ) {
     // 判断 Fragment
@@ -262,13 +262,13 @@ function ChildReconciler(shouldTrackEffects: boolean) {
     if (typeof newChild === "object" && newChild !== null) {
       // 多个子节点
       if (Array.isArray(newChild)) {
-        return reconcileChildrenArray(returnFiber, currentFiber, newChild);
+        return reconcileChildrenArray(returnFiber, currentFirstChild, newChild);
       }
 
       switch (newChild.$$typeof) {
         case REACT_ELEMENT_TYPE:
           return placeSingleChild(
-            reconcileSingleElement(returnFiber, currentFiber, newChild)
+            reconcileSingleElement(returnFiber, currentFirstChild, newChild)
           );
         default:
           if (__DEV__) {
@@ -281,13 +281,13 @@ function ChildReconciler(shouldTrackEffects: boolean) {
     // HostText
     if (typeof newChild === "string" || typeof newChild === "number") {
       return placeSingleChild(
-        reconcileSingleTextNode(returnFiber, currentFiber, newChild)
+        reconcileSingleTextNode(returnFiber, currentFirstChild, newChild)
       );
     }
 
     // 兜底删除
-    if (currentFiber !== null) {
-      deleteRemainingChildren(returnFiber, currentFiber);
+    if (currentFirstChild !== null) {
+      deleteRemainingChildren(returnFiber, currentFirstChild);
     }
 
     if (__DEV__) {

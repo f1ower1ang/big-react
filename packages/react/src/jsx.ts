@@ -70,7 +70,7 @@ export const jsx = (type: ElementType, config: any, ...maybeChildren: any) => {
 
 export const Fragment = REACT_FRAGMENT_TYPE;
 
-export function jsxDEV(type: ElementType, config: any, key: Key) {
+export function jsxDEV(type: ElementType, config: any, key: Key = null) {
   const props: Props = {};
   let ref: Ref = null;
 
@@ -86,5 +86,5 @@ export function jsxDEV(type: ElementType, config: any, key: Key) {
       props[prop] = val;
     }
   }
-  return ReactElement(type, key + "", ref, props);
+  return ReactElement(type, key, ref, props);
 }

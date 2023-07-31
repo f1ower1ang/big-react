@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ReactDOM from "react-dom/client";
 
 // 测试多节点移动
@@ -20,12 +20,9 @@ function App1() {
   );
 }
 
-function Child() {
-  return <span>child</span>;
-}
-
 // 测试Fragment
 function App2() {
+  const [num, setNum] = useState(0);
   // Fragment包裹其他组件
   const case1 = (
     <>
@@ -35,11 +32,15 @@ function App2() {
   );
   // Fragment与其他组件同级
   const case2 = (
-    <ul>
-      <>
-        <li>1</li>
-        <li>2</li>
-      </>
+    <ul onClick={() => setNum(num + 1)}>
+      {num % 2 === 0 ? (
+        case1
+      ) : (
+        <>
+          <li>1</li>
+          <li>2</li>
+        </>
+      )}
       <li>3</li>
       <li>4</li>
     </ul>
@@ -54,11 +55,57 @@ function App2() {
     </ul>
   );
 
-  return case3;
+  return case2;
 }
 
-const App = App2;
+// 批处理调度
+function App3() {
+  const [num, setNum] = useState(0);
+  const [count, setCount] = useState(0);
+  return (
+    <div
+      onClick={() => {
+        setNum((num) => num + 1);
+        setNum((num) => num + 1);
+        setNum((num) => num + 1);
+        setCount((c) => c + 1);
+        setCount((c) => c + 1);
+      }}
+    >
+      {num}-{count}
+    </div>
+  );
+}
 
-// const App = <div>hello react</div>;
+// useEffect
+function App4() {
+  const [num, setNum] = useState(0);
+  useEffect(() => {
+    console.log("App mount");
+  }, []);
+  useEffect(() => {
+    console.log("num change create", num);
+    return () => {
+      console.log("num change destroy", num);
+    };
+  }, [num]);
+  return (
+    <div onClick={() => setNum(num + 1)}>
+      {num % 2 === 0 ? <Child4 /> : num}
+    </div>
+  );
+}
+function Child4() {
+  useEffect(() => {
+    console.log("Child mount");
+    return () => {
+      console.log("Child unmount");
+    };
+  }, []);
+  return "i am child";
+}
+
+const App = App3;
+
 const root = document.querySelector("#root");
 ReactDOM.createRoot(root).render(<App />);
