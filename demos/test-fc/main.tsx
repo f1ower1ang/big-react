@@ -105,7 +105,7 @@ function Child4() {
   return "i am child";
 }
 
-const App = App3;
+const App = App4;
 
 const root = document.querySelector("#root");
 ReactDOM.createRoot(root).render(<App />);

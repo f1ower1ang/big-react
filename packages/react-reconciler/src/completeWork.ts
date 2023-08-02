@@ -19,7 +19,7 @@ function markUpdate(fiber: FiberNode) {
   fiber.flags |= Update;
 }
 
-// 递归中的回溯阶段：构建离屏DOM树
+// 递归中的归阶段(向右或向上)：构建离屏DOM树
 export const completeWork = (wip: FiberNode) => {
   const newProps = wip.pendingProps;
   const current = wip.alternate;

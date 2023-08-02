@@ -112,6 +112,7 @@ function mountEffect(create: EffectCallback | void, deps: EffectDeps | void) {
   const nextDeps = deps === undefined ? null : deps;
   (currentlyRenderingFiber as FiberNode).flags |= PassiveEffect;
 
+  // effect hook 的memorizedState 为 effect环状链表，这样就不用每次都遍历整个hook链表
   hook.memorizedState = pushEffect(
     Passive | HookHasEffect,
     create,

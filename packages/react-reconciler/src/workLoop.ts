@@ -187,6 +187,7 @@ function flushPassiveEffects(pendingPassiveEffects: PendingPassiveEffects) {
     commitHookEffectListCreate(Passive | HookHasEffect, effect);
   });
   pendingPassiveEffects.update = [];
+  // useEffect回调中可能会调用setState，所以需要清空syncQueue
   flushSyncCallbacks();
 }
 

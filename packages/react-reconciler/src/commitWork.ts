@@ -154,16 +154,18 @@ export function commitHookEffectListCreate(flags: Flags, lastEffect: Effect) {
   });
 }
 
-function recordHostChildrenTODelete(
+function recordHostChildrenToDelete(
   childrenToDeleted: FiberNode[],
   unMountFiber: FiberNode
 ) {
   // 1. 找到第一个 root host节点
   const lastOne = childrenToDeleted.at(-1);
 
+  // 处理 Fragment 的情况
   if (!lastOne) {
     childrenToDeleted.push(unMountFiber);
   } else {
+    // 2. 每找到一个host节点，判断下这个节点是不是 1 找到那个节点的兄弟节点，如果是，就不用删除了
     let node = lastOne.sibling;
     while (node !== null) {
       if (unMountFiber === node) {
@@ -172,7 +174,6 @@ function recordHostChildrenTODelete(
       node = node.sibling;
     }
   }
-  // 2. 每找到一个host节点，判断下这个节点是不是 1 找到那个节点的兄弟节点，如果是，就不用删除了
 }
 
 function commitDeletion(childToDelete: FiberNode, root: FiberRootNode) {
@@ -182,11 +183,11 @@ function commitDeletion(childToDelete: FiberNode, root: FiberRootNode) {
   commitNestedComponent(childToDelete, (unMountFiber) => {
     switch (unMountFiber.tag) {
       case HostComponent:
-        recordHostChildrenTODelete(rootChildrenToDeleted, unMountFiber);
+        recordHostChildrenToDelete(rootChildrenToDeleted, unMountFiber);
         // TODO 解绑ref
         return;
       case HostText:
-        recordHostChildrenTODelete(rootChildrenToDeleted, unMountFiber);
+        recordHostChildrenToDelete(rootChildrenToDeleted, unMountFiber);
         return;
       case FunctionComponent:
         // TODO 解绑ref
