@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import ReactDOM from "react-dom/client";
+// import ReactDOM from "react-dom/client";
+import ReactDOM from "react-noop-renderer";
 
 // 测试多节点移动
 function App1() {
@@ -105,7 +106,22 @@ function Child4() {
   return "i am child";
 }
 
-const App = App4;
+// const App = App4;
 
-const root = document.querySelector("#root");
-ReactDOM.createRoot(root).render(<App />);
+// const root = document.querySelector("#root");
+// ReactDOM.createRoot(root).render(<App />);
+
+function App() {
+  return (
+    <>
+      <Child />
+      <div>hello, world</div>
+    </>
+  );
+}
+function Child() {
+  return "child";
+}
+const root = ReactDOM.createRoot();
+root.render(<App />);
+window.root = root;
