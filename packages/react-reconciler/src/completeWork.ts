@@ -13,10 +13,14 @@ import {
   HostText,
   Fragment,
 } from "./workTags";
-import { NoFlags, Update } from "./fiberFlags";
+import { NoFlags, Ref, Update } from "./fiberFlags";
 
 function markUpdate(fiber: FiberNode) {
   fiber.flags |= Update;
+}
+
+function markRef(fiber: FiberNode) {
+  fiber.flags |= Ref;
 }
 
 // 递归中的归阶段(向右或向上)：构建离屏DOM树
@@ -31,12 +35,20 @@ export const completeWork = (wip: FiberNode) => {
         // 1. props是否有变化
         // 2. 变了 -> Update flag
         markUpdate(wip);
+        // 标记Ref
+        if (wip.ref !== current.ref) {
+          markRef(wip);
+        }
       } else {
         // 1. 构建DOM
         const instance = createInstance(wip.type, newProps);
         // 2. 将DOM插入到DOM树中
         appendAllChildren(instance, wip);
         wip.stateNode = instance;
+        // 标记Ref
+        if (wip.ref !== null) {
+          markRef(wip);
+        }
       }
       bubbleProperties(wip);
       return null;

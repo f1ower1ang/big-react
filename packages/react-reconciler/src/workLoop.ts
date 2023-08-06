@@ -4,6 +4,7 @@ import {
   commitHookEffectListCreate,
   commitHookEffectListDestroy,
   commitHookEffectListUnmount,
+  commitLayoutEffects,
   commitMutationEffects,
 } from "./commitWork";
 import { completeWork } from "./completeWork";
@@ -82,18 +83,19 @@ function ensureRootIsScheduled(root: FiberRootNode) {
   }
   let newCallbackNode = null;
 
+  if (__DEV__) {
+    console.log(
+      `在${updateLane === SyncLane ? "微" : "宏"}任务中调度，优先级：`,
+      updateLane
+    );
+  }
+
   if (updateLane === SyncLane) {
     // 同步优先级 用微任务调度
-    if (__DEV__) {
-      console.log("在微任务中调度，优先级：", updateLane);
-    }
     scheduleSyncCallback(performSyncWorkOnRoot.bind(null, root));
     scheduleMicrotask(flushSyncCallbacks);
   } else {
     // 其他优先级 用宏任务调度
-    if (__DEV__) {
-      console.log("在宏任务中调度，优先级：", updateLane);
-    }
     const schedulerPriority = lanesToSchedulerPriority(updateLane);
     newCallbackNode = scheduleCallback(
       schedulerPriority,
@@ -272,8 +274,10 @@ function commitRoot(root: FiberRootNode) {
     // 1. before mutation
     // 2. mutation Placement
     commitMutationEffects(finishedWork, root);
+    // fiber tree 切换
     root.current = finishedWork;
     // 3. layout
+    commitLayoutEffects(finishedWork, root);
   } else {
     root.current = finishedWork;
   }

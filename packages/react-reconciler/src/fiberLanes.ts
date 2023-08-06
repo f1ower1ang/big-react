@@ -6,6 +6,7 @@ import {
   unstable_NormalPriority,
   unstable_IdlePriority,
 } from "scheduler";
+import internals from "share/internals";
 
 export type Lane = number;
 export type Lanes = number;
@@ -18,11 +19,18 @@ export const DefaultLane: Lane = 1 << 2;
 export const TransitionLane: Lane = 1 << 3;
 export const IdleLane: Lane = 1 << 4;
 
+const { currentBatchConfig } = internals;
+
 export function mergeLanes(a: Lane, b: Lane): Lane {
   return a | b;
 }
 
 export function requestUpdateLane(): Lane {
+  const isTransition = currentBatchConfig.transition !== null;
+  if (isTransition) {
+    return TransitionLane;
+  }
+
   // 从上下文中获取当前的scheduler优先级
   const currentSchedulerPriority = unstable_getCurrentPriorityLevel();
   const lane = schedulerPriorityToLane(currentSchedulerPriority);

@@ -80,12 +80,14 @@ const HooksDispatcherOnMount = {
   useState: mountState,
   useEffect: mountEffect,
   useTransition: mountTransition,
+  useRef: mountRef,
 };
 
 const HooksDispatcherOnUpdate = {
   useState: updateState,
   useEffect: updateEffect,
   useTransition: updateTransition,
+  useRef: updateRef,
 };
 
 function mountState<State>(
@@ -103,6 +105,7 @@ function mountState<State>(
   const queue = createUpdateQueue<State>();
   hook.updateQueue = queue;
   hook.memorizedState = memorizedState;
+  hook.baseState = memorizedState;
 
   // @ts-ignore
   const dispatch = dispatchSetState.bind(null, currentlyRenderingFiber, queue);
@@ -192,17 +195,16 @@ function updateState<State>(): [State, Dispatch<State>] {
     // update保存在current中
     current.baseQueue = pending;
     queue.shared.pending = null;
-
-    if (baseQueue !== null) {
-      const {
-        memorizedState,
-        baseQueue: newBaseQueue,
-        baseState: newBaseState,
-      } = processUpdateQueue(baseState, baseQueue, renderLane);
-      hook.memorizedState = memorizedState;
-      hook.baseState = newBaseState;
-      hook.baseQueue = newBaseQueue;
-    }
+  }
+  if (baseQueue !== null) {
+    const {
+      memorizedState,
+      baseQueue: newBaseQueue,
+      baseState: newBaseState,
+    } = processUpdateQueue(baseState, baseQueue, renderLane);
+    hook.memorizedState = memorizedState;
+    hook.baseState = newBaseState;
+    hook.baseQueue = newBaseQueue;
   }
 
   return [hook.memorizedState, queue.dispatch as Dispatch<State>];
@@ -363,4 +365,16 @@ function startTransition(
   setIsPending(false);
 
   currentBatchConfig.transition = prevTransition;
+}
+
+function mountRef<T>(initialValue: T): { current: T } {
+  const hook = mountWorkInProgressHook();
+  const ref = { current: initialValue };
+  hook.memorizedState = ref;
+  return ref;
+}
+
+function updateRef<T>(initialValue: T): { current: T } {
+  const hook = updateWorkInProgressHook();
+  return hook.memorizedState;
 }
