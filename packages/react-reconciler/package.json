@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "share": "workspace:*"
+    "share": "workspace:*",
+    "scheduler": "^0.20.1"
   },
   "keywords": [],
   "author": "",

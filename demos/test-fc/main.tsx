@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-// import ReactDOM from "react-dom/client";
-import ReactDOM from "react-noop-renderer";
+import ReactDOM from "react-dom";
+// import ReactDOM from "react-noop-renderer";
 
 // 测试多节点移动
 function App1() {
@@ -106,22 +106,38 @@ function Child4() {
   return "i am child";
 }
 
-// const App = App4;
-
-// const root = document.querySelector("#root");
-// ReactDOM.createRoot(root).render(<App />);
-
-function App() {
-  return (
-    <>
-      <Child />
-      <div>hello, world</div>
-    </>
-  );
+// 测试concurrent模式
+function App5() {
+  const [num, setNum] = useState(100);
+  const arr = new Array(num).fill(0).map((_, i) => {
+    return <Child5 key={i}>{i}</Child5>;
+  });
+  return <ul onClick={() => setNum(50)}>{arr}</ul>;
 }
-function Child() {
-  return "child";
+
+function Child5({ children }) {
+  const now = performance.now();
+  while (performance.now() - now < 4) {}
+  return <li>{children}</li>;
 }
-const root = ReactDOM.createRoot();
-root.render(<App />);
-window.root = root;
+
+const App = App5;
+
+const root = document.querySelector("#root");
+ReactDOM.createRoot(root).render(<App />);
+
+// 测试react-noop-renderer
+// function App() {
+//   return (
+//     <>
+//       <Child />
+//       <div>hello, world</div>
+//     </>
+//   );
+// }
+// function Child() {
+//   return "child";
+// }
+// const root = ReactDOM.createRoot();
+// root.render(<App />);
+// window.root = root;
